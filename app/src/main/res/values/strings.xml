@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TestDiary</string>
+    <string name="by_number">по номеру</string>
+    <string name="by_author">по автору</string>
+    <string name="by_date">по дате</string>
+    <string name="sort_by">Сортировать по:</string>
+</resources>
