@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.testdiary.MainViewModel
@@ -26,4 +27,10 @@ fun DiaryList(
             DiaryCard(diaryItem, navController, deletePostState, currentDiaryItem)
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiaryListPreview(){
+
 }

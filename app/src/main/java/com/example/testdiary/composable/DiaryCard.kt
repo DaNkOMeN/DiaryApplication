@@ -1,5 +1,6 @@
 package com.example.testdiary.composable
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,10 +12,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -27,7 +30,7 @@ import com.google.gson.Gson
 @Composable
 fun DiaryCard(
     diaryItem: DiaryItem,
-    navController: NavController,
+    navController: NavController?,
     deletePostState: MutableState<Boolean>,
     currentDiaryItem: MutableState<DiaryItem>
 ) {
@@ -35,7 +38,7 @@ fun DiaryCard(
 
     fun navigateToDiaryOpenItem(diaryItem: DiaryItem) {
         val diaryItem = Gson().toJson(diaryItem)
-        navController.navigate("diary_open_post/$diaryItem")
+        navController?.navigate("diary_open_post/$diaryItem")
     }
 
     Card(
@@ -59,7 +62,7 @@ fun DiaryCard(
             .background(color = MaterialTheme.colors.primary)
             .border(BorderStroke(2.dp, MaterialTheme.colors.primary)),
 
-    ) {
+        ) {
 
         Row(modifier = Modifier.background(color = MaterialTheme.colors.secondary)) {
             Column(
@@ -98,6 +101,18 @@ fun DiaryCard(
                 }
             }
         }
-
     }
+}
+
+@SuppressLint("UnrememberedMutableState")
+@Composable
+@Preview(showBackground = true)
+fun DiaryCardPreview() {
+    val diaryItem = DiaryItem()
+    DiaryCard(
+        diaryItem = diaryItem,
+        navController = null,
+        deletePostState = mutableStateOf(false),
+        currentDiaryItem = mutableStateOf(diaryItem)
+    )
 }

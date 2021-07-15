@@ -3,8 +3,10 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/02ff477b34cf9dad2bd5a6cb462215b9/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b4d6b624eb31b62ae4efa0fa5c67d4a6/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b4d6b624eb31b62ae4efa0fa5c67d4a6/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b4d6b624eb31b62ae4efa0fa5c67d4a6/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/00c0c7abe4f833e3f841169c732fb503/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/6414b80697d371990f0ee0cba01e3039/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/6414b80697d371990f0ee0cba01e3039/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/6414b80697d371990f0ee0cba01e3039/transformed/jetified-hilt-lifecycle-viewmodel-1.0.0-alpha01/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
