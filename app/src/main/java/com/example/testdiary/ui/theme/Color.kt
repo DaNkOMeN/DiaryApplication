@@ -23,3 +23,11 @@ val FountainBlue = Color(0xff4DB3B3)
 val CinnabarRed = Color(0xffE64A45)
 val LimedSpruce = Color(0xff3D4C53)
 val White = Color(0xffffffff)
+
+//chotam Theme
+val CtotamBlue = Color(0xFF4312AE)
+val CtotamSand = Color(0xFFFFD573)
+val CtotamPurple = Color(0xFF8E6DD7)
+val CtotamOrange = Color(0xFFFFB300)
+val CtotamYellow = Color(0xFFE9FB00)
+val CtotamLightYellow = Color(0xFFF3FD72)

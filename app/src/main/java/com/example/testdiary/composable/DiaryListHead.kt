@@ -11,23 +11,26 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testdiary.BaseApplication
 
 
+//Заголовок главного меню с постами
+
 @Composable
-fun DiaryListHead(app: BaseApplication) {
+fun DiaryListHead(
+    app: BaseApplication,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
-            .fillMaxHeight(0.1f)
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colors.secondary)
-            .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary))
+        modifier = modifier
     ) {
         Row {
             Text(
@@ -35,7 +38,9 @@ fun DiaryListHead(app: BaseApplication) {
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(0.9f),
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .align(Alignment.CenterVertically),
                 color = MaterialTheme.colors.primary
             )
             Column {
@@ -58,4 +63,18 @@ fun DiaryListHead(app: BaseApplication) {
         }
 
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiaryListHeadPreview() {
+    DiaryListHead(
+        app = BaseApplication(),
+        modifier = Modifier
+            .fillMaxHeight(0.55f)
+            .fillMaxWidth()
+            .padding()
+            .background(color = MaterialTheme.colors.secondary)
+            .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary))
+    )
 }

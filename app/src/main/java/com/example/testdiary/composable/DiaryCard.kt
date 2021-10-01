@@ -11,33 +11,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.example.testdiary.data.DiaryItem
 import com.example.testdiary.data.stringalize
-import com.example.testdiary.MainViewModel
-import com.google.gson.Gson
+import java.util.*
 
 
+//Карточка записи в списке всех записей
 @Composable
 fun DiaryCard(
-    diaryItem: DiaryItem,
-    navController: NavController,
-    deletePostState: MutableState<Boolean>,
-    currentDiaryItem: MutableState<DiaryItem>
+    diaryItem: DiaryItem = DiaryItem(),
+    navigateToPostDetail : (Long) -> Unit = {},
+    deletePostState: MutableState<Boolean> = mutableStateOf(false),
+    currentDiaryItem: MutableState<DiaryItem> = mutableStateOf(diaryItem)
 ) {
-
-
-    fun navigateToDiaryOpenItem(diaryItem: DiaryItem) {
-        val diaryItem = Gson().toJson(diaryItem)
-        navController.navigate("diary_open_post/$diaryItem")
-    }
-
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
@@ -55,12 +47,11 @@ fun DiaryCard(
                     bottomStart = 20.dp
                 )
             )
-            .clickable { navigateToDiaryOpenItem(diaryItem) }
+            .clickable { navigateToPostDetail(diaryItem.id) }
             .background(color = MaterialTheme.colors.primary)
             .border(BorderStroke(2.dp, MaterialTheme.colors.primary)),
 
     ) {
-
         Row(modifier = Modifier.background(color = MaterialTheme.colors.secondary)) {
             Column(
                 modifier = Modifier
@@ -100,4 +91,16 @@ fun DiaryCard(
         }
 
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiaryCardPreview(){
+    DiaryCard(
+        diaryItem = DiaryItem(
+            author = "Danko",
+            date = Date().stringalize(),
+            message = "Something bullshit"
+        )
+    )
 }

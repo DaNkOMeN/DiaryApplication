@@ -2,30 +2,33 @@ package com.example.testdiary
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.rememberNavController
-import com.example.testdiary.composable.DiaryMainMenu
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import com.example.testdiary.composable.DiaryOpenPost
 import com.example.testdiary.composable.DiaryPost
-import com.example.testdiary.data.DiaryItem
+import com.example.testdiary.composable.DiaryPostList
+import com.example.testdiary.navigation.Screen
 import com.example.testdiary.ui.theme.DiaryAppTheme
-import com.google.gson.Gson
+import com.example.testdiary.viewmodels.PostDetailAddViewModel
+import com.example.testdiary.viewmodels.PostDetailViewModel
+import com.example.testdiary.viewmodels.PostListViewModel
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
+@OptIn(ExperimentalAnimationApi::class)
 class MainActivity : AppCompatActivity() {
-
 
 
     @Inject
@@ -37,72 +40,111 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             DiaryAppTheme(application.isDark.value) {
-                DiaryApplication()
+                BoxWithConstraints {
+                    val navController = rememberAnimatedNavController()
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = Screen.PostList.route,
+                        builder = {
+                            addPostDetail(navController = navController)
+                            addPostList(
+                                navController = navController,
+                                application = application
+                            )
+                            addPost(navController)
+                        })
+                }
             }
 
         }
     }
+}
 
-    @Composable
-    fun DiaryApplication() {
 
-        val navController = rememberNavController()
-//        val mainViewModel: MainViewModel by viewModels()
-        val mainViewModel = viewModel(MainViewModel::class.java)
-
-        NavHost(navController = navController, startDestination = "main_menu", builder = {
-            composable("main_menu") {
-                DiaryMainMenu(
-                    application = application,
-                    navController = navController,
-                    mainViewModel =mainViewModel,
-                    app = application
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addPostList(
+    navController: NavController,
+    application: BaseApplication
+) {
+    composable(
+        route = Screen.PostList.route,
+        enterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 1000,
+                    easing = FastOutSlowInEasing
                 )
-            }
-            composable("diary_post") {
-                DiaryPost(
-                    isEdit = false,
-                    diaryItem = DiaryItem(),
-                    navController = navController,
-                    viewModel = mainViewModel
+            ) + fadeIn(animationSpec = tween(1000))
+        },
+        popExitTransition = { _, target ->
+            slideOutHorizontally(
+                targetOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 1000,
+                    easing = FastOutSlowInEasing
                 )
-            }
-            composable(
-                "diary_open_post/{post}",
-                arguments = listOf(navArgument("post") {
-                    type = NavType.StringType
-                })
-            ) { backStackEntry ->
-                backStackEntry.arguments?.getString("post")?.let { json ->
-                    val diaryItem = Gson().fromJson(json, DiaryItem::class.java)
-                    DiaryOpenPost(
-                        diaryItem = diaryItem,
-                        navController = navController,
-                        mainViewModel = mainViewModel
-                    )
-                }
+            ) + fadeOut(animationSpec = tween(1000))
+        }
+    ) {
+        val postListViewModel: PostListViewModel = hiltViewModel()
+        DiaryPostList(
+            navigateToPostDetail = { postId ->
+                navController.navigate("${Screen.PostDetail.route}/$postId")
+            },
+            postListViewModel = postListViewModel,
+            application = application
+        )
+    }
+}
 
-            }
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addPostDetail(navController: NavController) {
+    composable(
+        route = Screen.PostDetail.route + "/{postId}",
+        arguments = Screen.PostDetail.arguments,
+        enterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = { _, target ->
+            slideOutHorizontally(
+                targetOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        }
+    ) {
+        val viewModel: PostDetailViewModel = hiltViewModel()
+        DiaryOpenPost(
+            navigateToPostList = {
+                navController.navigate(Screen.PostList.route)
+            },
+            viewModel = viewModel
+        )
 
-            composable(
-                "diary_post_edit/{post}",
-                arguments = listOf(navArgument("post") {
-                    type = NavType.StringType
-                })
-            ) { backStackEntry ->
-                backStackEntry.arguments?.getString("post")?.let { json ->
-                    val diaryItem = Gson().fromJson(json, DiaryItem::class.java)
-                    DiaryPost(
-                        isEdit = true,
-                        diaryItem = diaryItem,
-                        navController = navController,
-                        viewModel = mainViewModel
-                    )
-                }
+    }
+}
 
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addPost(navController: NavController) {
+    composable(
+        route = Screen.AddPost.route
+    ) {
+        val viewModel: PostDetailAddViewModel = hiltViewModel()
+        DiaryPost(
+            navigateToPostList = {
+                navController.navigate(Screen.PostList.route)
+            },
+            viewModel = viewModel
+        )
 
-            }
-
-        })
     }
 }

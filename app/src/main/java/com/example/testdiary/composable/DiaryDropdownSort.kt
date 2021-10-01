@@ -19,8 +19,12 @@ import com.example.testdiary.data.DiarySortStatus
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.testdiary.R
 
+
+//Выпадающий список с возможными сортировками
+//TODO посмотреть как сделана фильтрация на дота-приложении
 @Composable
 fun DiaryDropdownSort(application: BaseApplication) {
     val sortStatusList = listOf(DiarySortStatus.ID, DiarySortStatus.AUTHOR, DiarySortStatus.DATE)
@@ -34,7 +38,6 @@ fun DiaryDropdownSort(application: BaseApplication) {
             .wrapContentSize(Alignment.TopEnd)
 
     ) {
-
         DropdownMenu(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,4 +82,10 @@ fun translateSortStatus(sortStatus: DiarySortStatus) : String{
         DiarySortStatus.DATE -> return "Дате"
     }
     return ""
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiaryDropdownSortPreview() {
+    DiaryDropdownSort(application = BaseApplication())
 }

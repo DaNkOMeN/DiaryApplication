@@ -4,13 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,26 +18,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.navigate
-import com.example.testdiary.data.stringalize
-import com.example.testdiary.MainViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testdiary.data.DiaryItem
+import com.example.testdiary.data.stringalize
+import com.example.testdiary.viewmodels.PostDetailAddViewModel
 import java.util.*
-import androidx.compose.ui.text.input.ImeAction.Done as Done
 
 @Composable
 fun DiaryPost(
-    isEdit: Boolean,
-    diaryItem: DiaryItem,
-    navController: NavHostController,
-    viewModel: MainViewModel
+    isEdit: Boolean = true,
+    viewModel: PostDetailAddViewModel,
+    navigateToPostList: () -> Unit,
 ) {
-
+    var diaryItem = DiaryItem()
     val author = remember { mutableStateOf(diaryItem.author) }
     val message = remember { mutableStateOf(diaryItem.message) }
     val date = Date()
@@ -76,15 +73,12 @@ fun DiaryPost(
                     IconButton(
                         modifier = Modifier.padding(5.dp),
                         onClick = {
-                            navController.navigate("main_menu") {
-                                popUpTo = navController.graph.startDestination
-                                launchSingleTop = true
-                            }
+                            navigateToPostList()
                         },
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            null,
+                            contentDescription = "Кнопка возврата к списку",
                             tint = MaterialTheme.colors.primary,
                             modifier = Modifier.background(color = MaterialTheme.colors.secondary)
                         )
@@ -107,7 +101,7 @@ fun DiaryPost(
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = Done
+                        imeAction = ImeAction.Done
                     ),
                     placeholder = { Text(text = "Введите автора") },
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
@@ -145,7 +139,7 @@ fun DiaryPost(
                 placeholder = { Text(text = "Введите сообщение для поста") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = Done
+                    imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
@@ -159,17 +153,10 @@ fun DiaryPost(
                 if (isEdit) {
                     diaryItem.author = author.value
                     diaryItem.message = message.value
-                    viewModel.updatePost(diaryItem)
                 } else {
-                    viewModel.addNewPost(
-                        DiaryItem(0, author.value, date.stringalize(), message.value)
-
-                    )
                 }
-                navController.navigate("main_menu") {
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
-                }
+                viewModel.addDiaryItemToRepository(diaryItem = diaryItem)
+                navigateToPostList()
             }
         ) {
             Text(
@@ -184,4 +171,15 @@ fun DiaryPost(
 
 
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiaryPostPreview() {
+    val viewModel: PostDetailAddViewModel = hiltViewModel()
+    DiaryPost(
+        isEdit = true,
+        viewModel = viewModel,
+        navigateToPostList = {},
+    )
 }
