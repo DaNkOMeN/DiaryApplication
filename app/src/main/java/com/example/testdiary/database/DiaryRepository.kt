@@ -1,13 +1,12 @@
 package com.example.testdiary.database
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import com.example.testdiary.data.DiaryItem
 import javax.inject.Inject
 
 class DiaryRepository @Inject constructor(private val diaryDao: DiaryDao) {
 
-    val readAllData: MutableState<List<DiaryItem>> = diaryDao.getAllDiaryPosts()
+    val readAllData: LiveData<List<DiaryItem>> = diaryDao.getAllDiaryPosts()
 
     suspend fun addDiaryPost(diaryItem: DiaryItem) {
         diaryDao.insertDiaryPost(diaryItem)

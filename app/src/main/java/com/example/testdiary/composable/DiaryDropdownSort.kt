@@ -26,7 +26,7 @@ import com.example.testdiary.R
 //Выпадающий список с возможными сортировками
 //TODO посмотреть как сделана фильтрация на дота-приложении
 @Composable
-fun DiaryDropdownSort(application: BaseApplication) {
+fun DiaryDropdownSort(application: BaseApplication?) {
     val sortStatusList = listOf(DiarySortStatus.ID, DiarySortStatus.AUTHOR, DiarySortStatus.DATE)
 
     var expanded by remember { mutableStateOf(false) }
@@ -38,39 +38,41 @@ fun DiaryDropdownSort(application: BaseApplication) {
             .wrapContentSize(Alignment.TopEnd)
 
     ) {
-        DropdownMenu(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.secondary)
-                .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary)),
-            expanded = application.showDropdownList.value,
-            onDismissRequest = { application.toggleDropdownList() }) {
-            Column {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .background(color = MaterialTheme.colors.secondary)
-                        .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary)),
-                    text = stringResource(R.string.sort_by)
-                )
-                sortStatusList.forEachIndexed { index, s ->
-                    DropdownMenuItem(onClick = {
-                        application.setSort(
-                            if (s == application.currentSort.value) application.reverseSort(
-                                s
-                            ) else s
-                        )
-                        selectedIndex.value = index
-                        expanded = false
-                    }) {
-                        Text(
-                            text = translateSortStatus(s)
-                        )
+        application?.showDropdownList?.value?.let {
+            DropdownMenu(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colors.secondary)
+                    .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary)),
+                expanded = it,
+                onDismissRequest = { application.toggleDropdownList() }) {
+                Column {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = MaterialTheme.colors.secondary)
+                            .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary)),
+                        text = stringResource(R.string.sort_by)
+                    )
+                    sortStatusList.forEachIndexed { index, s ->
+                        DropdownMenuItem(onClick = {
+                            application.setSort(
+                                if (s == application.currentSort.value) application.reverseSort(
+                                    s
+                                ) else s
+                            )
+                            selectedIndex.value = index
+                            expanded = false
+                        }) {
+                            Text(
+                                text = translateSortStatus(s)
+                            )
+                        }
                     }
                 }
-            }
 
+            }
         }
     }
 }

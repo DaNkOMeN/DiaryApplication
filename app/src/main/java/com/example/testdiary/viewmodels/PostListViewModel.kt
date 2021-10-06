@@ -1,6 +1,5 @@
 package com.example.testdiary.viewmodels
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +16,7 @@ class PostListViewModel
 constructor(
     private val diaryRepository: DiaryRepository,
 ) : ViewModel() {
-    val allDiaryItems: MutableState<List<DiaryItem>> = diaryRepository.readAllData
+    val allDiaryItems: LiveData<List<DiaryItem>> = diaryRepository.readAllData
 
     fun addNewPost(diaryItem: DiaryItem) {
         viewModelScope.launch(Dispatchers.IO) {

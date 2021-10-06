@@ -2,19 +2,16 @@ package com.example.testdiary.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testdiary.data.DiaryItem
 import com.example.testdiary.viewmodels.PostDetailViewModel
@@ -29,13 +26,15 @@ import com.example.testdiary.viewmodels.PostDetailViewModel
 @Composable
 fun DiaryOpenPost(
     navigateToPostList: () -> Unit,
+    navigateToEditPost: (Long) -> Unit,
     viewModel: PostDetailViewModel
 ) {
-    when (val uiState = viewModel.postDetailState.value) {
-        is PostDetailViewModel.UIState.Error -> DiaryOpenPostError()
-        is PostDetailViewModel.UIState.Loading -> DiaryOpenPostLoading()
-        is PostDetailViewModel.UIState.Success -> TrulyOpenPost(
+    when (viewModel.postDetailState.value) {
+        is PostDetailViewModel.UIState.Error -> ErrorPost()
+        is PostDetailViewModel.UIState.Loading -> LoadingPost()
+        is PostDetailViewModel.UIState.Success -> CorrectOpenPost(
             navigateToPostList = navigateToPostList,
+            navigateToEditPost = navigateToEditPost,
             viewModel = viewModel
         )
     }
@@ -43,23 +42,26 @@ fun DiaryOpenPost(
 }
 
 @Composable
-fun DiaryOpenPostError() {
+fun ErrorPost() {
     Text(text = "ERROR")
 
 }
 
 @Composable
-fun DiaryOpenPostLoading() {
+fun LoadingPost() {
     Text(text = "LOADING")
 }
 
 @Composable
-fun TrulyOpenPost(
+fun CorrectOpenPost(
     navigateToPostList: () -> Unit,
-    viewModel: PostDetailViewModel
+    navigateToEditPost: (Long) -> Unit,
+    viewModel: PostDetailViewModel?
 ) {
-    val value = viewModel.postDetailState.value as PostDetailViewModel.UIState.Success
-    val diaryItem = value.currentPosts
+//    val value = viewModel?.postDetailState?.value as PostDetailViewModel.UIState.Success
+//    val diaryItem = value.currentPosts
+
+    val diaryItem = DiaryItem()
 
     Column(
         modifier = Modifier
@@ -169,9 +171,28 @@ fun TrulyOpenPost(
         Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { }//navigateToDiaryOpenItem(diaryItem = diaryItem) }
+            onClick = { navigateToEditPost(diaryItem.id) }
         ) {
             Text(text = "Редактировать пост")
         }
     }
+}
+
+
+@Composable
+@Preview(showBackground = true)
+fun ErrorPostPreview() {
+    ErrorPost()
+}
+
+@Composable
+@Preview(showBackground = true)
+fun LoadingPostPreview() {
+    LoadingPost()
+}
+
+@Composable
+@Preview(showBackground = true)
+fun CorrectOpenPostPreview() {
+    CorrectOpenPost(navigateToPostList = {}, navigateToEditPost = {} , viewModel = null)
 }

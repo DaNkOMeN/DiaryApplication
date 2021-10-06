@@ -26,13 +26,13 @@ import com.example.testdiary.BaseApplication
 
 @Composable
 fun DiaryListHead(
-    app: BaseApplication,
+    app: BaseApplication?,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
     ) {
-        Row {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Мой дневник",
                 fontSize = 30.sp,
@@ -44,17 +44,17 @@ fun DiaryListHead(
                 color = MaterialTheme.colors.primary
             )
             Column {
-                IconButton(onClick = { app.toggleLightTheme() }) {
+                IconButton(onClick = { app?.toggleLightTheme() }) {
                     Icon(
                         imageVector = Icons.Filled.Share,
-                        null,
+                        "Кнопка смена темы приложения",
                         tint = MaterialTheme.colors.primary
                     )
                 }
-                IconButton(onClick = { app.toggleDropdownList() }) {
+                IconButton(onClick = { app?.toggleDropdownList() }) {
                     Icon(
                         imageVector = Icons.Filled.Build,
-                        null,
+                        "Кнопка для вызова методов сортировки",
                         tint = MaterialTheme.colors.primary
                     )
                 }
@@ -69,9 +69,8 @@ fun DiaryListHead(
 @Preview(showBackground = true)
 fun DiaryListHeadPreview() {
     DiaryListHead(
-        app = BaseApplication(),
+        app = null,
         modifier = Modifier
-            .fillMaxHeight(0.55f)
             .fillMaxWidth()
             .padding()
             .background(color = MaterialTheme.colors.secondary)

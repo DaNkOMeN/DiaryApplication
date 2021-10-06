@@ -7,12 +7,16 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.example.testdiary.composable.DiaryOpenPost
-import com.example.testdiary.composable.DiaryPost
+import com.example.testdiary.composable.DiaryNewPost
 import com.example.testdiary.composable.DiaryPostList
 import com.example.testdiary.navigation.Screen
 import com.example.testdiary.ui.theme.DiaryAppTheme
@@ -88,11 +92,15 @@ fun NavGraphBuilder.addPostList(
         }
     ) {
         val postListViewModel: PostListViewModel = hiltViewModel()
+        val postList = postListViewModel.allDiaryItems.observeAsState(listOf()).value
         DiaryPostList(
             navigateToPostDetail = { postId ->
-                navController.navigate("${Screen.PostDetail.route}/$postId")
+                navController.navigate("${Screen.EditPost.route}/$postId")
             },
-            postListViewModel = postListViewModel,
+            navigateToEditPost = { postId ->
+                navController.navigate("${Screen.EditPost.route}/$postId")
+            },
+            postList = postList,
             application = application
         )
     }
@@ -127,6 +135,9 @@ fun NavGraphBuilder.addPostDetail(navController: NavController) {
             navigateToPostList = {
                 navController.navigate(Screen.PostList.route)
             },
+            navigateToEditPost = { postId ->
+                navController.navigate("${Screen.EditPost.route}/$postId")
+            },
             viewModel = viewModel
         )
 
@@ -139,11 +150,14 @@ fun NavGraphBuilder.addPost(navController: NavController) {
         route = Screen.AddPost.route
     ) {
         val viewModel: PostDetailAddViewModel = hiltViewModel()
-        DiaryPost(
+        DiaryNewPost(
             navigateToPostList = {
                 navController.navigate(Screen.PostList.route)
             },
-            viewModel = viewModel
+            viewModel = viewModel,
+            modifier = Modifier
+                .fillMaxHeight(0.5f)
+                .fillMaxWidth()
         )
 
     }
