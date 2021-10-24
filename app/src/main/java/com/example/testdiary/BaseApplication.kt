@@ -26,16 +26,6 @@ class BaseApplication: Application() {
         currentSort.value = sortStatus
     }
 
-    fun reverseSort(sortStatus: DiarySortStatus) : DiarySortStatus {
-        when (sortStatus) {
-            DiarySortStatus.ID -> return DiarySortStatus.IDREVERSE
-            DiarySortStatus.DATE -> return DiarySortStatus.DATEREVERSE
-            DiarySortStatus.AUTHOR -> return DiarySortStatus.AUTHORREVERSE
-            DiarySortStatus.IDREVERSE -> return DiarySortStatus.ID
-            DiarySortStatus.DATEREVERSE -> return DiarySortStatus.DATE
-            DiarySortStatus.AUTHORREVERSE -> return DiarySortStatus.AUTHOR
-        }
-        return DiarySortStatus.ID
-    }
+
 
 }

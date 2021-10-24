@@ -12,10 +12,10 @@ interface DiaryDao {
     fun getAllDiaryPosts(): LiveData<List<DiaryItem>>
 
     @Query("Select * from diaryItems where id = :id")
-    fun getDiaryPostById(id: Int) : DiaryItem
+    fun getDiaryPostById(id: Long) : DiaryItem
 
-    @Query("Delete from diaryItems where id = :index")
-    fun deleteDiaryPostByIndex(index : Int)
+    @Query("Delete from diaryItems where id = :id")
+    fun deleteDiaryPostByIndex(id : Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDiaryPost(diaryItem: DiaryItem)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testdiary.data.DiaryItem
 import com.example.testdiary.data.stringalize
+import com.example.testdiary.viewmodels.PostListViewModel
 import java.util.*
 
 
@@ -30,38 +32,48 @@ fun DiaryCard(
     diaryItem: DiaryItem = DiaryItem(),
     navigateToPostDetail: (Long) -> Unit = {},
     navigateToEditPost: (Long) -> Unit = {},
+    deleteDiaryPost: (Long) -> Unit = {},
     deletePostState: MutableState<Boolean> = mutableStateOf(false),
-    currentDiaryItem: MutableState<DiaryItem> = mutableStateOf(diaryItem),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: CornerBasedShape = RoundedCornerShape(20.dp)
 ) {
+
+    DiaryPostDeleteAlertDialog(
+        deleteDiaryPostState = deletePostState,
+        diaryItem = diaryItem,
+        deleteDiaryPost = deleteDiaryPost
+    )
+
     Card(
-        shape = MaterialTheme.shapes.medium,
-        modifier = modifier
-        ) {
-        Row(modifier = Modifier.background(color = MaterialTheme.colors.secondary)) {
+        shape = shape,
+        modifier = modifier,
+        border = BorderStroke(3.dp, MaterialTheme.colors.onPrimary)
+    ) {
+        Row(modifier = Modifier.background(color = MaterialTheme.colors.primary)) {
             Box(
                 modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth(0.7f)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
+                    .background(MaterialTheme.colors.primary),
             ) {
                 Row {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "Author:", color = MaterialTheme.colors.primary)
+                        Text(text = "Author:", color = MaterialTheme.colors.background)
                         Spacer(modifier = Modifier.padding(10.dp))
-                        Text(text = "Date:", color = MaterialTheme.colors.primary)
+                        Text(text = "Date:", color = MaterialTheme.colors.background)
                     }
                     Spacer(modifier = Modifier.padding(10.dp))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = diaryItem.author, color = MaterialTheme.colors.primary)
+                        Text(text = diaryItem.author, color = MaterialTheme.colors.background)
                         Spacer(modifier = Modifier.padding(10.dp))
-                        Text(text = diaryItem.date, color = MaterialTheme.colors.primary)
+                        Text(text = diaryItem.date, color = MaterialTheme.colors.background)
                     }
                 }
             }
@@ -76,14 +88,12 @@ fun DiaryCard(
                     modifier = Modifier
                         .size(35.dp)
                         .padding(5.dp),
-                    onClick = {
-
-                    }
+                    onClick = { deletePostState.value = true }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.background
                     )
                 }
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -92,12 +102,13 @@ fun DiaryCard(
                         .size(35.dp)
                         .padding(5.dp),
                     onClick = {
+                        navigateToEditPost(diaryItem.id)
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.background
                     )
                 }
             }
@@ -114,6 +125,12 @@ fun DiaryCardPreview() {
             author = "Danko",
             date = Date().stringalize(),
             message = "Something bullshit"
-        )
+        ),
+        modifier = Modifier
+            .padding(all = 10.dp)
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.primary)
+            .clickable { },
+        shape = MaterialTheme.shapes.small
     )
 }

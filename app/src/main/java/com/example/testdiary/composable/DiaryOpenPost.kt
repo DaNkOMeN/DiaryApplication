@@ -27,15 +27,15 @@ import com.example.testdiary.viewmodels.PostDetailViewModel
 fun DiaryOpenPost(
     navigateToPostList: () -> Unit,
     navigateToEditPost: (Long) -> Unit,
-    viewModel: PostDetailViewModel
+    state: PostDetailViewModel.UIState
 ) {
-    when (viewModel.postDetailState.value) {
+    when (state) {
         is PostDetailViewModel.UIState.Error -> ErrorPost()
         is PostDetailViewModel.UIState.Loading -> LoadingPost()
         is PostDetailViewModel.UIState.Success -> CorrectOpenPost(
             navigateToPostList = navigateToPostList,
             navigateToEditPost = navigateToEditPost,
-            viewModel = viewModel
+            diaryItem = state.currentPost
         )
     }
 
@@ -56,17 +56,13 @@ fun LoadingPost() {
 fun CorrectOpenPost(
     navigateToPostList: () -> Unit,
     navigateToEditPost: (Long) -> Unit,
-    viewModel: PostDetailViewModel?
+    diaryItem: DiaryItem
 ) {
-//    val value = viewModel?.postDetailState?.value as PostDetailViewModel.UIState.Success
-//    val diaryItem = value.currentPosts
-
-    val diaryItem = DiaryItem()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .fillMaxHeight()
     ) {
         Box(
             modifier = Modifier
@@ -100,80 +96,84 @@ fun CorrectOpenPost(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                Card(
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 15.dp,
-                                topEnd = 15.dp,
-                                bottomEnd = 15.dp,
-                                bottomStart = 15.dp
-                            )
-                        )
-                ) {
-                    Text(
-                        text = "Автор поста: ${diaryItem.author}",
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Card(
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .background(color = MaterialTheme.colors.secondary)
-                    )
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 15.dp,
+                                    topEnd = 15.dp,
+                                    bottomEnd = 15.dp,
+                                    bottomStart = 15.dp
+                                )
+                            )
+                    ) {
+                        Text(
+                            text = "Автор поста: ${diaryItem.author}",
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .background(color = MaterialTheme.colors.secondary)
+                        )
+                    }
+                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+                    Card(
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 15.dp,
+                                    topEnd = 15.dp,
+                                    bottomEnd = 15.dp,
+                                    bottomStart = 15.dp
+                                )
+                            )
+                    ) {
+                        Text(
+                            text = "Дата создания поста: ${diaryItem.date}",
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .background(color = MaterialTheme.colors.secondary)
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                Card(
-                    shape = MaterialTheme.shapes.medium,
+                Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+                Box(
                     modifier = Modifier
+                        .fillMaxHeight()
                         .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 15.dp,
-                                topEnd = 15.dp,
-                                bottomEnd = 15.dp,
-                                bottomStart = 15.dp
-                            )
-                        )
                 ) {
-                    Text(
-                        text = "Дата создания поста: ${diaryItem.date}",
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .background(color = MaterialTheme.colors.secondary)
-                    )
+                    Column {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colors.primary),
+                            text = "Сообщение"
+                        )
+                        Spacer(modifier = Modifier.padding(10.dp))
+                        Card(
+                            modifier = Modifier
+                                .fillMaxHeight(0.8f),
+                            backgroundColor = Color.LightGray
+                        ) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = diaryItem.message
+                            )
+                        }
+
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { navigateToEditPost(diaryItem.id) }
+                        ) {
+                            Text(text = "Редактировать пост")
+                        }
+                    }
                 }
             }
 
-
-            Spacer(modifier = Modifier.fillMaxHeight(0.2f))
-        }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.primary),
-            text = "Сообщение"
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(),
-            backgroundColor = Color.LightGray
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                text = diaryItem.message
-            )
-        }
-
-        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { navigateToEditPost(diaryItem.id) }
-        ) {
-            Text(text = "Редактировать пост")
         }
     }
 }
@@ -194,5 +194,5 @@ fun LoadingPostPreview() {
 @Composable
 @Preview(showBackground = true)
 fun CorrectOpenPostPreview() {
-    CorrectOpenPost(navigateToPostList = {}, navigateToEditPost = {} , viewModel = null)
+    CorrectOpenPost(navigateToPostList = {}, navigateToEditPost = {}, DiaryItem())
 }

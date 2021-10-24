@@ -14,7 +14,7 @@ sealed class Screen(val route: String, val arguments: List<NamedNavArgument>) {
     object PostDetail : Screen(
         route = "postDetail",
         arguments = listOf(navArgument("postId") {
-            type = NavType.IntType
+            type = NavType.LongType
         })
     )
 
@@ -26,7 +26,7 @@ sealed class Screen(val route: String, val arguments: List<NamedNavArgument>) {
     object EditPost : Screen(
         route = "editPost",
         arguments = listOf(navArgument("postId") {
-            type = NavType.IntType
+            type = NavType.LongType
         })
     )
 

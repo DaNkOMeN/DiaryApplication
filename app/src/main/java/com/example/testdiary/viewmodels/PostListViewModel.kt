@@ -36,7 +36,7 @@ constructor(
         }
     }
 
-    fun deletePostByIndex(index: Int) {
+    fun deletePostByIndex(index: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             diaryRepository.deleteDiaryPostByIndex(index)
         }

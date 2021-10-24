@@ -10,17 +10,21 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import com.example.testdiary.composable.DiaryEditPost
 import com.example.testdiary.composable.DiaryOpenPost
 import com.example.testdiary.composable.DiaryNewPost
 import com.example.testdiary.composable.DiaryPostList
+import com.example.testdiary.data.DiarySortStatus
 import com.example.testdiary.navigation.Screen
 import com.example.testdiary.ui.theme.DiaryAppTheme
 import com.example.testdiary.viewmodels.PostDetailAddViewModel
+import com.example.testdiary.viewmodels.PostDetailEditViewModel
 import com.example.testdiary.viewmodels.PostDetailViewModel
 import com.example.testdiary.viewmodels.PostListViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                                 application = application
                             )
                             addPost(navController)
+                            addEditPost(navController)
                         })
                 }
             }
@@ -95,10 +100,17 @@ fun NavGraphBuilder.addPostList(
         val postList = postListViewModel.allDiaryItems.observeAsState(listOf()).value
         DiaryPostList(
             navigateToPostDetail = { postId ->
-                navController.navigate("${Screen.EditPost.route}/$postId")
+                navController.navigate(route = "${Screen.PostDetail.route}/$postId")
             },
             navigateToEditPost = { postId ->
-                navController.navigate("${Screen.EditPost.route}/$postId")
+                navController.navigate(route = "${Screen.EditPost.route}/$postId")
+            },
+            navigateToAddPost = { navController.navigate(route = Screen.AddPost.route) },
+            deletePost = { postId ->
+                postListViewModel.deletePostByIndex(postId)
+            },
+            deleteAllPosts = {
+                postListViewModel.deleteAllPosts()
             },
             postList = postList,
             application = application
@@ -133,12 +145,50 @@ fun NavGraphBuilder.addPostDetail(navController: NavController) {
         val viewModel: PostDetailViewModel = hiltViewModel()
         DiaryOpenPost(
             navigateToPostList = {
-                navController.navigate(Screen.PostList.route)
+                navController.navigate(route = Screen.PostList.route)
             },
             navigateToEditPost = { postId ->
-                navController.navigate("${Screen.EditPost.route}/$postId")
+                navController.navigate(route = "${Screen.EditPost.route}/$postId")
             },
-            viewModel = viewModel
+            state = viewModel.postDetailState.value
+        )
+
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addEditPost(navController: NavController) {
+    composable(
+        route = Screen.EditPost.route + "/{postId}",
+        arguments = Screen.EditPost.arguments,
+        enterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = { _, target ->
+            slideOutHorizontally(
+                targetOffsetX = { 100 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        }
+    ) {
+        val viewModel: PostDetailEditViewModel = hiltViewModel()
+        DiaryEditPost(
+            navigateToPostList = {
+                navController.navigate(route = Screen.PostList.route)
+            },
+            updatePost = { diaryItem ->
+                viewModel.updateDiaryItem(diaryItem = diaryItem)
+            } ,
+            state = viewModel.postDetailEditState.value
         )
 
     }
@@ -152,12 +202,12 @@ fun NavGraphBuilder.addPost(navController: NavController) {
         val viewModel: PostDetailAddViewModel = hiltViewModel()
         DiaryNewPost(
             navigateToPostList = {
-                navController.navigate(Screen.PostList.route)
+                navController.navigate(route = Screen.PostList.route)
             },
-            viewModel = viewModel,
-            modifier = Modifier
-                .fillMaxHeight(0.5f)
-                .fillMaxWidth()
+            addNewPost = {
+                diaryItem ->
+                viewModel.addDiaryItemToRepository(diaryItem = diaryItem)
+            }
         )
 
     }

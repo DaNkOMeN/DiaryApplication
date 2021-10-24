@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class PostDetailViewModel
+class PostDetailEditViewModel
 @Inject
 constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -28,7 +28,7 @@ constructor(
         object Error : UIState()
     }
 
-    val postDetailState: State<UIState>
+    val postDetailEditState: State<UIState>
         get() = _postDetailState
     private val _postDetailState = mutableStateOf<UIState>(UIState.Loading)
 
@@ -48,7 +48,11 @@ constructor(
                 }
             }
         }
-
     }
 
+    fun updateDiaryItem(diaryItem: DiaryItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            diaryRepository.updateDiaryPost(diaryItem = diaryItem)
+        }
+    }
 }

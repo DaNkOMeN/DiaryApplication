@@ -31,3 +31,9 @@ val CtotamPurple = Color(0xFF8E6DD7)
 val CtotamOrange = Color(0xFFFFB300)
 val CtotamYellow = Color(0xFFE9FB00)
 val CtotamLightYellow = Color(0xFFF3FD72)
+val CtotamDarkBlue = Color(0xFFF250672)
+
+
+val LenaBluePrimary = Color(0xFF0E1D31)
+val LenaWhiteBackground = Color(0xFFEFEFEF)
+val LenaYellowSecondary = Color(0xFFE3AB3E)

@@ -32,9 +32,8 @@ import java.util.*
 
 @Composable
 fun DiaryNewPost(
-    viewModel: PostDetailAddViewModel?,
+    addNewPost: (DiaryItem) -> Unit,
     navigateToPostList: () -> Unit,
-    modifier: Modifier
 ) {
     var diaryItem = DiaryItem()
     val author = remember { mutableStateOf(diaryItem.author) }
@@ -42,7 +41,9 @@ fun DiaryNewPost(
     val focusManager = LocalFocusManager.current
 
     Box(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
     ) {
         Column {
             Row(
@@ -130,7 +131,7 @@ fun DiaryNewPost(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done
                     ),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 )
 
             }
@@ -142,7 +143,8 @@ fun DiaryNewPost(
                 onClick = {
                     diaryItem.author = author.value
                     diaryItem.message = message.value
-                    viewModel?.addDiaryItemToRepository(diaryItem = diaryItem)
+                    diaryItem.date = Date().stringalize()
+                    addNewPost(diaryItem)
                     navigateToPostList()
                 }
             ) {
@@ -161,14 +163,11 @@ fun DiaryNewPost(
 }
 
 
-    @Composable
-    @Preview(showBackground = true)
-    fun DiaryNewPostPreview() {
-        DiaryNewPost(
-            viewModel = null,
-            navigateToPostList = {},
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-        )
-    }
+@Composable
+@Preview(showBackground = true)
+fun DiaryNewPostPreview() {
+    DiaryNewPost(
+        navigateToPostList = {},
+        addNewPost = {},
+    )
+}

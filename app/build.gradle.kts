@@ -64,6 +64,7 @@ dependencies {
     implementation(Dependencies.Compose.material)
     implementation(Dependencies.Compose.uiTooling)
     implementation(Dependencies.Compose.uiToolingPreview)
+    implementation(Dependencies.Compose.navigation)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.4.0-beta01")
 
@@ -75,21 +76,17 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.0.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01")
 
-    implementation("androidx.navigation:navigation-compose:2.4.0-alpha4")
-
     implementation (Dependencies.Room.roomRuntime)
     kapt (Dependencies.Room.roomCompiler)
     implementation (Dependencies.Room.roomKtx)
 
     //Gson
-    implementation ("com.google.code.gson:gson:2.8.6")
+    implementation (Dependencies.Gson.gson)
 
     implementation (Dependencies.Hilt.hiltAndroid)
     kapt (Dependencies.Hilt.hiltAndroidCompiler)
-
     implementation (Dependencies.Hilt.hiltLifecycleViewmodel)
     kapt (Dependencies.Hilt.hiltCompiler)
-
     implementation (Dependencies.Hilt.hiltNavigationCompose)
 
     //navigation animation

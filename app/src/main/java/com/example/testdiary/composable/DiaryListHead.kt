@@ -1,18 +1,18 @@
 package com.example.testdiary.composable
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testdiary.BaseApplication
+import com.example.testdiary.data.DiarySortStatus
 
 
 //Заголовок главного меню с постами
@@ -27,41 +28,52 @@ import com.example.testdiary.BaseApplication
 @Composable
 fun DiaryListHead(
     app: BaseApplication?,
-    modifier: Modifier = Modifier
+    sortStatus: MutableState<DiarySortStatus> = mutableStateOf(DiarySortStatus.DATE),
 ) {
-    Box(
-        modifier = modifier
+    val openDropdownSort = remember { mutableStateOf(false) }
+
+    DiaryDropdownSort(openDropdownSort = openDropdownSort, sortStatus = sortStatus)
+
+    Row(
+        modifier = Modifier.padding(horizontal = 20.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Мой дневник",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(width = 4.dp, color = MaterialTheme.colors.onSecondary)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterVertically),
-                color = MaterialTheme.colors.primary
-            )
-            Column {
-                IconButton(onClick = { app?.toggleLightTheme() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        "Кнопка смена темы приложения",
-                        tint = MaterialTheme.colors.primary
-                    )
-                }
-                IconButton(onClick = { app?.toggleDropdownList() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Build,
-                        "Кнопка для вызова методов сортировки",
-                        tint = MaterialTheme.colors.primary
-                    )
+                    .background(MaterialTheme.colors.secondary)
+            ) {
+                Text(
+                    text = "Мой дневник",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(0.9f),
+                    color = MaterialTheme.colors.background
+                )
+                Column {
+                    IconButton(onClick = { app?.toggleLightTheme() }) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            "Кнопка смена темы приложения",
+                            tint = MaterialTheme.colors.background
+                        )
+                    }
+                    IconButton(onClick = { openDropdownSort.value = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Build,
+                            "Кнопка для вызова методов сортировки",
+                            tint = MaterialTheme.colors.background
+                        )
+                    }
+
                 }
             }
-
         }
-
     }
 }
 
@@ -70,10 +82,5 @@ fun DiaryListHead(
 fun DiaryListHeadPreview() {
     DiaryListHead(
         app = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding()
-            .background(color = MaterialTheme.colors.secondary)
-            .border(border = BorderStroke(2.dp, MaterialTheme.colors.primary))
     )
 }

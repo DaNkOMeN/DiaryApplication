@@ -20,11 +20,11 @@ class DiaryRepository @Inject constructor(private val diaryDao: DiaryDao) {
         diaryDao.deleteDiaryPost(diaryItem)
     }
 
-    suspend fun deleteDiaryPostByIndex(index: Int) {
+    suspend fun deleteDiaryPostByIndex(index: Long) {
         diaryDao.deleteDiaryPostByIndex(index)
     }
 
-    suspend fun getDiaryPostDyIndex(index: Int): DiaryItem {
+    suspend fun getDiaryPostDyIndex(index: Long): DiaryItem {
         return diaryDao.getDiaryPostById(index)
     }
 
