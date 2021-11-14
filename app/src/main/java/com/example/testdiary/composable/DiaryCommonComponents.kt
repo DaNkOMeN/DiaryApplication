@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,9 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.testdiary.data.DiaryItem
+import com.example.testdiary.viewmodels.PostListViewModel
 
 /*
     Содержится список общих элементов для всей программы
@@ -35,8 +35,8 @@ fun DiaryDeleteButton(deleteAllDiaryPosts: MutableState<Boolean>) {
     Box(
         modifier = Modifier
             .padding(10.dp)
-            .background(color = MaterialTheme.colors.background)
-            .border(BorderStroke(2.dp, MaterialTheme.colors.secondary))
+            .background(color = MaterialTheme.colors.primary)
+            .border(BorderStroke(2.dp, MaterialTheme.colors.onPrimary))
             .fillMaxWidth()
     ) {
         Spacer(modifier = Modifier.padding(10.dp))
@@ -46,7 +46,7 @@ fun DiaryDeleteButton(deleteAllDiaryPosts: MutableState<Boolean>) {
                 .align(Alignment.Center),
             onClick = { deleteAllDiaryPosts.value = true },
         ) {
-            Text(text = "Удалить все записи")
+            Text(text = "Удалить все записи", color = MaterialTheme.colors.background)
         }
 
     }
@@ -64,17 +64,15 @@ fun DiaryDeleteButtonPreview() {
 //Кнопка добавления новой записи в дневник
 //TODO сделать повыразительней, может куда то убрать
 @Composable
-fun DiaryAddPostButton(navController: NavHostController) {
+fun DiaryAddPostButton(navigateToAddPost: () -> Unit) {
     FloatingActionButton(
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.secondary,
+        backgroundColor = MaterialTheme.colors.secondary,
+        contentColor = MaterialTheme.colors.background,
         onClick = {
-            navController.navigate("diary_post") {
-                popUpTo = navController.graph.startDestinationId
-                launchSingleTop = true
-            }
-        }
-        ) {
+            navigateToAddPost()
+        },
+        shape = RoundedCornerShape(20.dp)
+    ) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = "Кнопка добавления новой записи в дневник"
@@ -85,7 +83,7 @@ fun DiaryAddPostButton(navController: NavHostController) {
 @Composable
 @Preview(showBackground = true)
 fun DiaryAppPostButtonPreview() {
-    DiaryAddPostButton(navController = rememberNavController())
+    DiaryAddPostButton(navigateToAddPost = {})
 }
 
 
@@ -93,11 +91,13 @@ fun DiaryAppPostButtonPreview() {
 //Посмотреть как реализовано удаления в других программах
 @Composable
 fun DiaryPostDeleteAllAlertDialog(
-//    viewModel: MainViewModel?,
-    deleteAllDiaryPostsState: MutableState<Boolean>
+    deleteAllDiaryPostsState: MutableState<Boolean>,
+    deleteAllPosts: () -> Unit
 ) {
     if (deleteAllDiaryPostsState.value) {
         AlertDialog(
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.primary,
             onDismissRequest = { deleteAllDiaryPostsState.value = false },
             title = { Text(text = "Подтверждение удаления") },
             text = {
@@ -107,24 +107,26 @@ fun DiaryPostDeleteAllAlertDialog(
             },
             confirmButton = {
                 IconButton(onClick = {
-//                    viewModel?.deleteAllPosts()
-                    deleteAllDiaryPostsState.value = false
-                }) {
+                    deleteAllPosts()
+                    deleteAllDiaryPostsState.value = false }) {
                     Icon(
                         imageVector = Icons.Filled.Check,
                         null,
                         tint = MaterialTheme.colors.primary,
-                        modifier = Modifier.background(color = MaterialTheme.colors.secondary)
+                        modifier = Modifier.background(color = MaterialTheme.colors.onSecondary)
                     )
                 }
             },
             dismissButton = {
-                IconButton(onClick = { deleteAllDiaryPostsState.value = false }) {
+                IconButton(onClick = {
+                    deleteAllPosts()
+                    deleteAllDiaryPostsState.value = false
+                }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         null,
-                        tint = MaterialTheme.colors.primary,
-                        modifier = Modifier.background(color = MaterialTheme.colors.secondary)
+                        tint = MaterialTheme.colors.secondary,
+                        modifier = Modifier.background(color = MaterialTheme.colors.onPrimary)
                     )
                 }
             },
@@ -132,24 +134,18 @@ fun DiaryPostDeleteAllAlertDialog(
     }
 }
 
-@SuppressLint("UnrememberedMutableState")
-@Composable
-@Preview(showBackground = true)
-fun DiaryPostDeleteAllAlertDialogPreview() {
-    DiaryPostDeleteAllAlertDialog( deleteAllDiaryPostsState = mutableStateOf(true))
-}
-
 
 //Удаление одного поста
 //TODO тоже что нибдуь придумать
 @Composable
 fun DiaryPostDeleteAlertDialog(
-    deletePostState: MutableState<Boolean>,
-    diaryItem: DiaryItem
+    deleteDiaryPostState: MutableState<Boolean>,
+    diaryItem: DiaryItem,
+    deleteDiaryPost: (Long) -> Unit = {}
 ) {
-    if (deletePostState.value) {
+    if (deleteDiaryPostState.value) {
         AlertDialog(
-            onDismissRequest = { deletePostState.value = false },
+            onDismissRequest = { deleteDiaryPostState.value = false },
             title = { Text(text = "Подтверждение удаления") },
             text = {
                 Text(
@@ -158,8 +154,8 @@ fun DiaryPostDeleteAlertDialog(
             },
             confirmButton = {
                 IconButton(onClick = {
-//                    viewModel.deletePost(diaryItem)
-                    deletePostState.value = false
+                    deleteDiaryPost(diaryItem.id)
+                    deleteDiaryPostState.value = false
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Check,
@@ -170,7 +166,7 @@ fun DiaryPostDeleteAlertDialog(
                 }
             },
             dismissButton = {
-                IconButton(onClick = { deletePostState.value = false }) {
+                IconButton(onClick = { deleteDiaryPostState.value = false }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         null,

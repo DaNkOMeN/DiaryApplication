@@ -1,5 +1,6 @@
 package com.example.testdiary.composable
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.testdiary.data.DiaryItem
+import com.example.testdiary.ui.theme.DiaryAppTheme
 import com.example.testdiary.viewmodels.PostDetailEditViewModel
 import com.example.testdiary.viewmodels.PostDetailViewModel
 
@@ -54,69 +58,57 @@ fun CorrectEditPost(
     diaryItem: DiaryItem,
     updatePost: (DiaryItem) -> Unit,
 ) {
-
     val newAuthor = remember { mutableStateOf(diaryItem.author) }
     val newMessage = remember { mutableStateOf(diaryItem.message) }
     val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
-        Box(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxHeight(0.5f)
                 .fillMaxWidth()
+                .background(color = MaterialTheme.colors.primary),
         ) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = MaterialTheme.colors.primary),
-                ) {
-                    Text(
-                        text = "Редактирование поста",
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .background(color = MaterialTheme.colors.secondary)
-                    )
-                    IconButton(modifier = Modifier.padding(5.dp),
-                        onClick = {
-                            navigateToPostList()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            null,
-                            tint = MaterialTheme.colors.primary,
-                            modifier = Modifier.background(color = MaterialTheme.colors.secondary)
-                        )
-                    }
+            Text(
+                text = "Редактирование поста",
+                modifier = Modifier
+                    .fillMaxWidth(0.8f),
+                color = MaterialTheme.colors.background
+            )
+            IconButton(modifier = Modifier.padding(5.dp),
+                onClick = {
+                    navigateToPostList()
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                Card(
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.3f)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 15.dp,
-                                topEnd = 15.dp,
-                                bottomEnd = 15.dp,
-                                bottomStart = 15.dp
-                            )
-                        )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    null,
+                    tint = MaterialTheme.colors.background,
+                )
+            }
+        }
+        Column(
+            modifier = Modifier.padding(
+                top = 40.dp,
+                bottom = 20.dp,
+                start = 20.dp,
+                end = 20.dp
+            )
+        ) {
+            Box {
+                Column(
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Row {
+                    Row(
+                        modifier = Modifier.wrapContentSize(align = Alignment.Center),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = "Автор поста: ",
-                            modifier = Modifier
-                                .fillMaxWidth(0.2f)
-                                .fillMaxHeight()
-                                .background(color = MaterialTheme.colors.secondary)
                         )
                         TextField(
                             value = newAuthor.value,
@@ -125,70 +117,73 @@ fun CorrectEditPost(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Done
                             ),
-                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
-                        )
-
-                    }
-                }
-                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                Card(
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 15.dp,
-                                topEnd = 15.dp,
-                                bottomEnd = 15.dp,
-                                bottomStart = 15.dp
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                            modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically)
+                                .background(color = MaterialTheme.colors.background),
+                            singleLine = true,
+                            textStyle = TextStyle(fontSize = 20.sp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = MaterialTheme.colors.background
                             )
                         )
-                ) {
-                    Text(
-                        text = "Дата создания поста: ${diaryItem.date}",
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .background(color = MaterialTheme.colors.secondary)
-                    )
+                    }
+                    Row {
+                        Text(
+                            text = "Дата создания поста: ${diaryItem.date}"
+
+                        )
+                        Text(text = diaryItem.date)
+                    }
                 }
             }
-            Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+            Column(modifier = Modifier.padding(top = 40.dp)) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Сообщение:",
+                    color = MaterialTheme.colors.primary
+                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight(fraction = 0.9f)
+                        .fillMaxWidth(),
+                    border = BorderStroke(3.dp, MaterialTheme.colors.primary),
+                    shape = RoundedCornerShape(40.dp),
+                    backgroundColor = MaterialTheme.colors.background
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(20.dp)
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.background),
+                            value = newMessage.value,
+                            onValueChange = {
+                                newMessage.value = it
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = MaterialTheme.colors.background
+                            )
+                        )
+                    }
+                }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    onClick = {
+                        diaryItem.author = newAuthor.value
+                        diaryItem.message = newMessage.value
+                        updatePost(diaryItem)
+                    }
+                ) {
+                    Text(text = "Обновить данные пост")
+                }
+            }
         }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.primary),
-            text = "Сообщение"
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(),
-            backgroundColor = Color.LightGray
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                value = newMessage.value,
-                onValueChange = { newMessage.value = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
-            )
-        }
-        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-        Button(onClick = {
-            diaryItem.message = newMessage.value
-            diaryItem.author = newAuthor.value
-            updatePost(diaryItem)
-            navigateToPostList()
-        }) {
-            Text(text = "Обновить данные")
-        }
+
     }
 }
 
@@ -196,9 +191,11 @@ fun CorrectEditPost(
 @Preview(showBackground = true)
 @Composable
 fun DiaryEditPostPreview() {
-    CorrectEditPost(
-        navigateToPostList = {},
-        diaryItem = DiaryItem(author = "jija", message = "Perjija"),
-        updatePost = {}
-    )
+    DiaryAppTheme {
+        CorrectEditPost(
+            navigateToPostList = {},
+            diaryItem = DiaryItem(author = "jija", message = "Perjija"),
+            updatePost = {}
+        )
+    }
 }

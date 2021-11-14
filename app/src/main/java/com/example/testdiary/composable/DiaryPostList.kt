@@ -15,11 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testdiary.BaseApplication
 
 import com.example.testdiary.data.DiaryItem
 import com.example.testdiary.data.DiarySortStatus
+import com.example.testdiary.ui.theme.DiaryAppTheme
 import com.example.testdiary.viewmodels.PostListViewModel
 
 @Composable
@@ -29,7 +31,7 @@ fun DiaryPostList(
     navigateToAddPost: () -> Unit = {},
     deletePost: (Long) -> Unit = {},
     deleteAllPosts: () -> Unit = {},
-    application: BaseApplication?,
+    application: BaseApplication? = null,
     modifier: Modifier = Modifier,
     postList: List<DiaryItem> = emptyList()
 ) {
@@ -88,4 +90,13 @@ fun DiaryPostList(
     )
 
 
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun DiaryPostListPreview() {
+    DiaryAppTheme {
+        DiaryPostList(postList = listOf(DiaryItem(), DiaryItem(author = "DAankoad")))
+    }
 }

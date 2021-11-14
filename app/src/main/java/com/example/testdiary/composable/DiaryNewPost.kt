@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testdiary.data.DiaryItem
 import com.example.testdiary.data.stringalize
+import com.example.testdiary.ui.theme.DiaryAppTheme
 import com.example.testdiary.viewmodels.PostDetailAddViewModel
 import java.util.*
 
@@ -166,8 +167,10 @@ fun DiaryNewPost(
 @Composable
 @Preview(showBackground = true)
 fun DiaryNewPostPreview() {
-    DiaryNewPost(
-        navigateToPostList = {},
-        addNewPost = {},
-    )
+    DiaryAppTheme {
+        DiaryNewPost(
+            navigateToPostList = {},
+            addNewPost = {},
+        )
+    }
 }
